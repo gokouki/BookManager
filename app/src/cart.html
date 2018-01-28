@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>图书商城app</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <style>
+        body{
+            background-color: #F6F6F6;
+
+        }
+        .i-header{
+            height: 44px;
+            background-color: #337ab7;
+            color: white;
+            font-size: 24px;
+            text-align-last:center;
+            line-height: 44px;
+            position: relative;
+        }
+        .i-login{
+            color: white;
+            position: absolute;
+            top:3px;
+            right: 15px;
+        }
+
+        .i-footer{
+            width: 100%;
+            height: 50px;
+            background-color: #fff;
+            box-shadow: 0px -4px 3px #eee;
+            /* 固定定位 以可视区域为参考做位置调整 */
+            position: fixed;
+            bottom: 0;
+
+        }
+        .i-footer ul,li{
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        .i-nav{
+            width: 100%;
+            /* 开启弹性布局 本来默认是从上往下排 现在变成了从左往右 */
+            display: flex;
+
+        }
+        .i-nav li{
+            width: 33.33333333%;
+            text-align: center;
+            line-height: 50px;
+            height: 50px;
+            font-size: 28px;
+            box-sizing: border-box;
+            padding-top: 3px;
+        }
+        .i-nav li a{
+            color: #999;
+        }
+        .i-active{
+            color: #337ab7 !important;
+        }
+        .book-img img{
+            height: 100px;
+        }
+        .table{
+            background-color: #fff;
+           
+        }
+        .table tr td:nth-of-type(1){
+            width: 150px;
+        }
+        .table tr td:nth-type(2){
+            padding-top: 20px;
+        }
+        .book-box{
+            padding-top: 20px;
+            margin-bottom: 60px;
+        }
+        .book-title span{
+            font-weight: bold;
+        }
+        .book-price span{
+            color: red;
+        }
+        .book-price em{
+            font-size: 18px;
+            color: #ff9024;
+        }
+        .book-num span{
+            color: #1988F7;
+        }
+        .sum-price{
+            font-size: 24px;
+            font-weight: bold;
+            text-align: right;
+        }
+        .sum-price em{
+            color: #ff9024;
+        }
+        .sum-price span{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+   <header class="i-header">
+      购物车
+   </header>
+   <div class="container" class="book-box">
+ 
+                <table class="table">
+                    <tr>
+                        <td class="book-img">
+                            <img src="http://img3m6.ddimg.cn/68/27/25171016-1_l_3.jpg" alt="">
+                        </td>
+                        <td>
+                            <p class="book-title">作者 <span>老人与海</span></p>
+                            <p class="book-price">价格 <span>¥</span><em>19.99</em></p>
+                            <p class="book-num">数量 <span>29</span>本</p>
+                        </td>                   
+                    </tr>
+                </table>
+                <div class="sum-price">
+                    总金额:<span>¥</span><em>999.99</em>元
+                </div>
+                <div class="col-xs-10 col-xs-offset-1">
+                    <button class="btn btn-block btn-success" id="btn-submit">提交订单</button>
+                </div>
+    
+   </div>
+   
+
+   <!-- 下导航 -->
+   <footer class="i-footer">
+        <ul class="i-nav">
+            <li>
+                   
+                <a href="index.html">
+                    <span class="glyphicon glyphicon-home"></span>
+                </a>
+            </li>
+            <li>
+                <a href="JavaScript:;"  class="i-active">
+                    <span class="glyphicon glyphicon-shopping-cart"></span>
+                </a>
+            </li>
+            <li>
+                <a href="my.html">
+                    <span class="glyphicon glyphicon-user"></span>
+                </a>
+            </li>
+        </ul>
+
+
+   </footer>
+
+   <script src="bootstrap/js/jquery.js"></script>
+   <script src="layer/layer.js"></script>
+   <script src="bootstrap/js/jquery.cookie.js"></script>
+   <script>
+        //判断用户是否登入
+       if($.cookie('userinfo')){
+            var userinfo = JSON.parse($.cookie('userinfo'));
+            // 判断是否有购物车订单
+            if($.cookie('userCart' + userinfo.account)){
+                // 有订单
+                // 获取购物信息
+                var arr = JSON.parse($.cookie('userCart' + userinfo.account));
+                // 将订单信息展示在页面上
+                var str = '';
+                arr.forEach(function(item){
+                    str += `
+                    <tr>
+                        <td class="book-img">
+                            <img src="${item.img}" alt="">
+                        </td>
+                        <td>
+                            <p class="book-title">作者 <span>${item.title}</span></p>
+                            <p class="book-price">价格 <span>¥</span><em>${item.price}</em></p>
+                            <p class="book-num">数量 <span>${item.num}</span>本</p>
+                        </td>                   
+                    </tr>`
+                })
+                $('.table').html(str);
+
+                // 统计购物车总金额
+                var sum = 0;
+                arr.forEach(function(item){
+                    sum += (item.price * item.num);
+                });
+                 // console.log(sum.toFixed(2));
+                 $('.sum-price em').html(sum.toFixed(2));
+
+                 // 点击订单提交将数据保存在用户的订单信息
+                 $('#btn-submit').click(function(){
+                     var data = {
+                         id:userinfo.account,
+                         cart:arr,
+                         sum:sum.toFixed(2)
+                     }
+                     $.get('/my/orderSubmit',data,function(res){
+                         if(res.code == 1){
+                             layer.msg(res.data);
+                             // 提交成功删除cookie保存的订单
+                             $.removeCookie('userCart' + userinfo.account,{path:'/'});
+                             location.href = 'my.html';
+                         }
+                     })
+                 })
+ 
+             }else{
+                 // 无订单
+             }
+         }else{
+             location.href = 'login.html';
+         }
+     
+   </script>
+</body>
+</html>

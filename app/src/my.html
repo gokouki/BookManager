@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>图书商城app</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <style>
+        body{
+            background-color: #F6F6F6;
+        }
+        .i-header{
+            height: 44px;
+            background-color: #337ab7;
+            color: #ffffff;
+            font-size: 24px;
+            text-align: center;
+            line-height: 44px;
+            position: relative;
+        }
+        .i-login{
+            color: #fff;
+            position: absolute;
+            top: 3px;
+            right: 15px;
+        }
+
+        .i-footer{
+            width: 100%;
+            height: 50px;
+            background-color: #fff;
+            box-shadow: 0px -4px 3px #eeeeee;
+            /* 固定定位,以可视区域为参考做位置调整 */
+            position: fixed;
+            bottom: 0;
+        }
+
+        .i-footer ul,li{
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        .i-nav{
+            width: 100%;
+            /* 开启弹性布局 */
+            display: flex;
+        }
+        .i-nav li{
+            width: 33.333333333333%;
+            text-align: center;
+            line-height: 50px;
+            height: 50px;
+            font-size: 28px;
+            box-sizing: border-box;
+            padding-top: 3px;
+        }
+        .i-nav li a{
+            color: #999;
+        }
+        .i-active{
+            color: #337ab7 !important;
+        }
+        .m-table{
+            width: 100%;    
+        }
+        .m-table td{
+            vertical-align: top;
+        }
+        .book-img{
+            vertical-align: middle !important;
+            width: 120px;   
+            border-bottom: 1px solid #eee;
+        }
+        .book-img img{
+            width: 80%; 
+        }
+        .book-title{
+            width: 40px;   
+        }
+        .order-box{
+            margin: 30px auto 50px;
+        }
+        .book-price em{
+            color: #ff9024;
+        }
+        .book-price span{
+            color: red;
+        }
+        .order-sum{
+            text-align: right;
+        }
+        .order-sum em{
+            color: #ff9024;
+        }
+        .order-sum span{
+            color: red;
+        }
+        .order-time{
+            border-bottom: 1px solid #eee;
+            padding-left: 10px;
+        }
+        .m-table tr:last-child td{
+            border-bottom: 1px solid #eee;
+        }
+    
+    </style>
+</head>
+<body>
+    <header class="i-header">
+        个人中心
+    </header>
+    <div class="container order-box">
+        <div class="alert alert-warning" role="alert">
+            我的订单
+        </div>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <div class="order-time">
+                    2017年12月29日 15:54
+                </div>
+                <table class="m-table">
+                    <tr>
+                        <td rowspan="4" class="book-img">
+                            <img src="http://img3m6.ddimg.cn/68/27/25171016-1_l_3.jpg" alt="书籍封面">
+                        </td>
+                        <td class="book-title">书名:</td>
+                        <td>海明威</td>
+                    </tr>
+                    <tr>
+                        <td>作者:</td>
+                        <td>海明威</td>
+                    </tr>
+                    <tr>
+                        <td>数量:</td>
+                        <td>10</td>
+                    </tr>
+                    <tr>
+                        <td>价格:</td>
+                        <td class="book-price"><span>¥</span><em>20.00</td>
+                    </tr>
+                </table>
+                <div class="order-sum">
+                    总价:<span>¥</span><em>20.00</em>
+                </div>
+            </li>
+        </ul>
+
+
+    </div>
+
+    <!-- 下导航 -->
+    <footer class="i-footer">
+        <ul class="i-nav"> 
+            <li>
+                <!-- javascript:;禁用a标签的刷新操作 -->
+                <a href="index.html">
+                    <span class="glyphicon glyphicon-home"></span>
+                </a>
+            </li>
+            <li>
+                <a href="cart.html">
+                    <span class="glyphicon glyphicon-shopping-cart"></span>
+                </a>
+            </li>
+            <li>
+                <a href="JavaScript:;" class="i-active">
+                    <span class="glyphicon glyphicon-user"></span>
+                </a>
+            </li>
+        </ul>
+    </footer>
+    <script src="bootstrap/js/jquery.js"></script>
+    <script src="bootstrap/js/jquery.cookie.js"></script>
+    <script>
+        // 判断用户是否已经登入
+        if($.cookie('userinfo')){
+            var userInfo = JSON.parse($.cookie('userinfo'));
+            var data = {
+                id: userInfo.account
+            }
+            // 获取订单信息
+            $.get('/my/getOrder',data,function(res){
+                console.log(res);
+                if(res.code == 1){
+                    var str = ''
+                    res.data.forEach(function(item){
+                        str += `<li class="list-group-item">
+                                    <div class="order-time">
+                                       ${item.time}
+                                    </div>`
+                        item.data.forEach(function(item2){
+                            str += `<table class="m-table">
+                                        <tr>
+                                            <td rowspan="4" class="book-img">
+                                                <img src="${item2.img}" alt="书籍封面">
+                                            </td>
+                                            <td class="book-title">书名:</td>
+                                            <td>${item2.title}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>作者:</td>
+                                            <td>${item2.author}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>数量:</td>
+                                            <td>${item2.num}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>价格:</td>
+                                            <td class="book-price"><span>¥</span><em>${item2.price}</td>
+                                        </tr>
+                                    </table>`
+                        })
+
+                        str += `<div class="order-sum">
+                                    总价:<span>¥</span><em>${item.sum}</em>
+                                </div>
+                            </li>`
+
+                    })
+                    $('.list-group').html(str)
+                }
+            })
+        }else{
+            location.href = 'login.html'
+        }
+    
+    </script>
+</body>
+</html>

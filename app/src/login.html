@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>登入</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <style>
+        .l-header{
+            height: 44px;
+            background-color: #337ab7;
+            color: white;
+            font-size: 24px;
+            text-align-last:center;
+            line-height: 44px;
+            position: relative;
+        }
+    .l-content{
+        padding-top: 50px;
+    }        
+    .l-go-index{
+        float: left;
+        color: white;
+        position: absolute;
+        left:5px;
+        top: 2px;   
+    }
+    
+    </style>
+</head>
+<body>
+    <header class="l-header">
+        <a href="index.html" class="l-go-index">
+        <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>      
+        </a>
+        用户登入    
+    </header>
+    <div class="container l-content">
+        <form>
+            <div class="form-group">
+                <label for="account">账号</label>
+                <input type="text" class="form-control" id="account" placeholder="请输入账号">
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" class="form-control" id="password" placeholder="请输入密码">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">登入</button>
+            <a href="register.html" class="btn btn-warning btn-block">还没有账号?点此注册!</a>
+        </form>
+    </div>   
+    <script src="bootstrap/js/jquery.js"></script>
+    <script src="layer/layer.js"></script>
+    <script src="bootstrap/js/jquery.cookie.js"></script>
+    <script>
+        $('form').submit(function(e){
+            //阻止表单默认的提交刷新事件
+            e.preventDefault();
+            // 判断表单控件内容不能为空
+            if($('#account').val() != '' && $('#password').val() != ''){
+                // 获取表单信息
+                var data = {
+                    account:$('#account').val(),
+                    password:$('#password').val()
+                }
+                $.post('/user/login',data,function(res){
+                    if(res.code == 1 ){
+                        //登入成功
+                        layer.msg(res.data);
+                        var userInfo = JSON.stringify(data);
+                        // 将信息保存到cookie
+                        $.cookie('userinfo',userInfo,{path:'/'});
+                        // 跳转到主页
+                        location.href = 'index.html';
+                    }else{
+                        layer.msg(res.data);
+                    }
+                })
+            }else{
+                layer.msg('输入信息不能为空');
+            }
+        })
+    </script>
+</body>
+</html>
